@@ -44,7 +44,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     @Override
     public void onStart() {
         super.onStart();
-        /*Aquire The Semaphore To State Map Has Not Been Initialized*/
+        /*Acquire The Semaphore To State Map Has Not Been Initialized*/
         try {
             mapSem.acquire();
         } catch (InterruptedException e) {
@@ -146,6 +146,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher)));
         /*Add The Marker To The Map*/
         getMap().addMarker(options);
+
     }
 
     /*
@@ -229,16 +230,8 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        /*Create A New Position Based On Location*/
-        //CameraPosition position = CameraPosition.builder()
-        //        .target(new LatLng(/*location.getLatitude()*/32, /*location.getLongitude()*/58))
-        //        .zoom(zoom)
-        //        .bearing(0.0f)
-        //        .tilt(0.0f)
-        //        .build();
         /*Position The Camera To The Location*/
-        //getMap().animateCamera(CameraUpdateFactory.newCameraPosition(position), null);
-        getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(32, 58), zoom));
+        getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), zoom));
         /*Set The Map Options To Desired Options*/
         getMap().setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         getMap().setBuildingsEnabled(true);
@@ -253,12 +246,15 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         /*Create A Spawn Radius Cicrle*/
         CircleOptions spawnRad = new CircleOptions();
         /*Set The Center To The User*/
-        //options.center(new LatLng(location.getLatitude(), location.getLongitude()));
-        spawnRad.center(new LatLng(32, 58));
+        spawnRad.center(new LatLng(location.getLatitude(), location.getLongitude()));
+
+
+
         /*Set The Radius To The Screen Width*/
-        //todo fix
-        //options.radius(Resources.getSystem().getDisplayMetrics().widthPixels/2*zoomconv[Math.round(zoom)]);
-        spawnRad.radius(100);
+        spawnRad.radius(Resources.getSystem().getDisplayMetrics().widthPixels/2*zoomconv[Math.round(zoom)]);
+
+
+
         /*Set The Basic Options Of The Spawn Radius Circle*/
         spawnRad.fillColor(Color.TRANSPARENT);
         spawnRad.strokeColor(Color.LTGRAY);
