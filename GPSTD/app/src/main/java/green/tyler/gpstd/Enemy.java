@@ -6,10 +6,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class Enemy {
+
     protected Marker marker;
     protected int health;
     protected double range;
     protected int attack;
+
     Enemy() {
         health = 1;
         range = 1;

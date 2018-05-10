@@ -14,7 +14,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -33,8 +33,9 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
 
     private GoogleApiClient mGoogleApiClient;   //The API Client
     private final Semaphore mapSem = new Semaphore(1 , true);   //Semaphore Dealing With Concurrency Issues Between Connection and Map Initialization
-    private double zoomconv[] = {21282,16355,10064,5540,2909,1485,752,378,190,95,48,24,12,6,3,1.48,0.74,0.37,0.19}; //Conversion From Zoom Level To Pixel Array
     private float zoom = 16f;   //Current Zoom Level
+    private Circle innerCircle;
+    private Circle outerCirlce;
 
     /*
      * onStart
@@ -82,7 +83,6 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         /*Run Camera Initialization*/
         initCamera(mCurrentLocation);
     }
-
     /*
     * onConnectionSuspended
     * Runs When The Connection To The API Client Has Been Suspended
@@ -214,12 +214,13 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         getMap().setOnMapLongClickListener(this);
         getMap().setOnInfoWindowClickListener(this);
         getMap().setOnMapClickListener(this);
+        //getMap().setOnMyLocationChangeListener();
         /*Release The Semaphore*/
         mapSem.release();
     }
 
     /*
-     * intiCamera
+     * initCamera
      * Runs After A Connection Is Made And The API Client Has Been Created
      * Creates An Initial View For The Map
      */
@@ -237,29 +238,48 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         getMap().setBuildingsEnabled(true);
         getMap().setMyLocationEnabled(true);
         getMap().setTrafficEnabled(false);
-        //TODO set max and mon zoom levels
         getMap().getUiSettings().setZoomControlsEnabled(true);
         getMap().getUiSettings().setMyLocationButtonEnabled(false);
         getMap().getUiSettings().setAllGesturesEnabled(false);
         getMap().getUiSettings().setCompassEnabled(false);
         getMap().getUiSettings().setMapToolbarEnabled(false);
-        /*Create A Spawn Radius Cicrle*/
+        /*Create An Inner Spawn Radius Cicrle*/
         CircleOptions spawnRad = new CircleOptions();
         /*Set The Center To The User*/
         spawnRad.center(new LatLng(location.getLatitude(), location.getLongitude()));
-
-
-
-        /*Set The Radius To The Screen Width*/
-        spawnRad.radius(Resources.getSystem().getDisplayMetrics().widthPixels/2*zoomconv[Math.round(zoom)]);
-
-
-
+        /*Set The Radius To Half The Screen Width*/
+        double innerSpawnRad = Resources.getSystem().getDisplayMetrics().widthPixels/2*metersPerPixel(location.getLatitude(), zoom);
+        spawnRad.radius(innerSpawnRad);
         /*Set The Basic Options Of The Spawn Radius Circle*/
         spawnRad.fillColor(Color.TRANSPARENT);
         spawnRad.strokeColor(Color.LTGRAY);
         spawnRad.strokeWidth(5);
         /*Add The Circle To The Map*/
-        getMap().addCircle(spawnRad);
+        innerCircle = getMap().addCircle(spawnRad);
+        /*Create An Outer Spawn Radius Circle*/
+        spawnRad = new CircleOptions();
+        /*Set The Center To The User*/
+        spawnRad.center(new LatLng(location.getLatitude(), location.getLongitude()));
+        /*Set The Radius To Half The Screen Width X 2.5*/
+        double outerSpawnRad = innerSpawnRad*2.5;
+        spawnRad.radius(outerSpawnRad);
+        /*Set The Basic Options Of The Spawn Radius Circle*/
+        spawnRad.fillColor(Color.TRANSPARENT);
+        spawnRad.strokeColor(Color.LTGRAY);
+        spawnRad.strokeWidth(5);
+        /*Add The Circle To The Map*/
+        outerCirlce = getMap().addCircle(spawnRad);
+    }
+
+    /*
+     * metersPerPixel
+     * Runs During The Camera Initialization
+     * Converts At The Given Latitude How Many Meters Are In One Pixel
+     */
+    public double metersPerPixel(double lat, double zoom) {
+        double pixelsPerTile = 256 * ((double)Resources.getSystem().getDisplayMetrics().densityDpi / 160);
+        double numTiles = Math.pow(2,zoom);
+        double metersPerTile = Math.cos(Math.toRadians(lat)) * 40070000 / numTiles;
+        return metersPerTile/pixelsPerTile;
     }
 }
