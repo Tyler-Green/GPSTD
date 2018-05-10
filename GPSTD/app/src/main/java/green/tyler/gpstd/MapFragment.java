@@ -122,13 +122,10 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     @Override
     public void onMapClick(LatLng latLng) {
         /*Create A New Marker Options*/
-        MarkerOptions options = new MarkerOptions().position(latLng);
-        /*Set The Title Based On The Location*/
-        options.title(getAddressFromLatLng(latLng));
-        /*Set The Icon To Default*/
-        options.icon(BitmapDescriptorFactory.defaultMarker());
+        Tower tower = new Fire_Tower();
+        MarkerOptions options = tower.createOptions(getResources(), latLng);
         /*Add Marker To The Map*/
-        getMap().addMarker(options);
+        tower.setMarker(getMap().addMarker(options));
     }
 
     /*
@@ -138,15 +135,11 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     */
     @Override
     public void onMapLongClick(LatLng latLng) {
-        /*Create A new Marker*/
-        MarkerOptions options = new MarkerOptions().position(latLng);
-        /*Set The Title Based On Location*/
-        options.title( getAddressFromLatLng(latLng));
-        /*Set The Icon To The App Icon*/
-        options.icon(BitmapDescriptorFactory.fromBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher)));
-        /*Add The Marker To The Map*/
-        getMap().addMarker(options);
-
+        /*Create A New Marker Options*/
+        Enemy enemy = new Knight();
+        MarkerOptions options = enemy.createOptions(getResources(), latLng);
+        /*Add Marker To The Map*/
+        enemy.setMarker(getMap().addMarker(options));
     }
 
     /*

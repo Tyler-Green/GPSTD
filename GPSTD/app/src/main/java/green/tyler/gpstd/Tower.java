@@ -7,21 +7,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class Enemy {
-
+public class Tower {
     protected Marker marker;
-    protected int health;
+    protected double rof;
     protected double range;
     protected int attack;
 
-    Enemy() {
-        health = 1;
+    Tower() {
+        rof = 1;
         range = 1;
         attack = 1;
-    }
-
-    void update() {
-        marker.setPosition(new LatLng(marker.getPosition().latitude+0.25, marker.getPosition().longitude));
     }
 
     void setMarker(Marker _MARKER) {
@@ -30,7 +25,7 @@ public class Enemy {
 
     MarkerOptions createOptions(Resources res, LatLng latLng) {
         MarkerOptions options = new MarkerOptions();
-        options.title("Enemy");
+        options.title("Tower");
         options.draggable(false);
         options.flat(true);
         options.icon(BitmapDescriptorFactory.defaultMarker());
