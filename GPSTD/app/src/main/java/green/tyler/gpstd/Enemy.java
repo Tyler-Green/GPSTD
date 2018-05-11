@@ -13,15 +13,17 @@ public class Enemy {
     protected int health;
     protected double range;
     protected int attack;
+    protected double velocity;
 
     Enemy() {
         health = 1;
         range = 1;
         attack = 1;
+        velocity = 1;
     }
 
-    void update() {
-        marker.setPosition(new LatLng(marker.getPosition().latitude+0.25, marker.getPosition().longitude));
+    void move() {
+        marker.setPosition(new LatLng(marker.getPosition().latitude+0.1, marker.getPosition().longitude));
     }
 
     void setMarker(Marker _MARKER) {

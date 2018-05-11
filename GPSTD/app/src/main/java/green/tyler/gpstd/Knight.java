@@ -11,6 +11,7 @@ public class Knight extends Enemy {
     Knight() {
         super();
     }
+
     MarkerOptions createOptions(Resources res, LatLng latLng) {
         MarkerOptions options = super.createOptions(res, latLng);
         options.title("Knight");

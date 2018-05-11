@@ -1,7 +1,6 @@
 package green.tyler.gpstd;
 
 import android.content.res.Resources;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,7 +12,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -36,6 +34,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     private float zoom = 16f;   //Current Zoom Level
     private Circle innerCircle;
     private Circle outerCirlce;
+    private Manager manager;
 
     /*
      * onStart
@@ -51,6 +50,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        manager = new Manager();
         /*Start The API Client Connection*/
         mGoogleApiClient.connect();
     }
@@ -140,6 +140,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         MarkerOptions options = enemy.createOptions(getResources(), latLng);
         /*Add Marker To The Map*/
         enemy.setMarker(getMap().addMarker(options));
+        manager.addEnemy(enemy);
     }
 
     /*
