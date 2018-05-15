@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -35,6 +38,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
     private Circle innerCircle;
     private Circle outerCirlce;
     private Manager manager;
+    private Handler movementHandler;
 
     /*
      * onStart
@@ -50,7 +54,13 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        manager = new Manager();
+        movementHandler = new Handler(Looper.getMainLooper()) {
+            @Override
+            public void handleMessage(Message msg) {
+                manager.movement();
+            }
+        };
+        manager = new Manager(movementHandler);
         /*Start The API Client Connection*/
         mGoogleApiClient.connect();
     }
@@ -126,6 +136,7 @@ public class MapFragment extends com.google.android.gms.maps.MapFragment impleme
         MarkerOptions options = tower.createOptions(getResources(), latLng);
         /*Add Marker To The Map*/
         tower.setMarker(getMap().addMarker(options));
+        manager.addTower(tower);
     }
 
     /*
